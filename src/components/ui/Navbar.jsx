@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 
 const navLinks = [
+  { name: "Home", href: "/"},
   { name: "Browse Jobs", href: "/jobs" },
   { name: "Company", href: "/company" },
   { name: "Pricing", href: "/pricing" },
@@ -51,14 +52,14 @@ export default function Navbar() {
           <div className="h-6 w-px bg-white/20" />
 
           <Link
-            href="/login"
+            href="/signIn"
             className="text-sm text-indigo-400 transition-colors hover:text-indigo-300"
           >
             Sign In
           </Link>
 
           <Button
-            render={<Link href="/register" />}
+            render={<Link href="/signUp" />}
             className="rounded-lg bg-indigo-600 px-5 text-white hover:bg-indigo-500"
           >
             Get Started
@@ -99,12 +100,12 @@ export default function Navbar() {
 
                 <div className="h-px bg-white/10" />
 
-                <Link href="/login" className="text-indigo-400">
+                <Link href="/signIn" className="text-indigo-400">
                   Sign In
                 </Link>
 
                 <Button
-                  render={<Link href="/register" />}
+                  render={<Link href="/signUp" />}
                   className="bg-indigo-600 hover:bg-indigo-500"
                 >
                   Get Started
