@@ -1,5 +1,14 @@
 import Hero from "@/components/Hero";
+import Navbar from "@/components/ui/Navbar";
 
-export default function Home() {
-  return <Hero />;
-}
+
+const page = () => {
+  return (
+    <div>
+      <Navbar />
+      <Hero />
+    </div>
+  );
+};
+
+export default page;

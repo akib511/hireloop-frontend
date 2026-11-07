@@ -2,9 +2,14 @@
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
   import Link from "next/link";
+import { Briefcase, Shield, UserSearch } from "lucide-react";
 
- 
-  
+const ROLE_OPTIONS = [
+  { value: "seeker", label: "Seeker", icon: UserSearch },
+  { value: "recruiter", label: "Recruiter", icon: Briefcase },
+  { value: "admin", label: "Admin", icon: Shield },
+];
+
   export default function SignUpForm () {
     
       const router = useRouter();
@@ -28,7 +33,7 @@ import { useRouter } from "next/navigation";
     name: data.name,
     email: data.email,
     password: data.password,
-    
+    role: data.role,
   });
 
   if (error) {
@@ -70,6 +75,32 @@ router.push("/signIn");
 
           {/* Form */}
           <form  onSubmit={handleSubmit} className="space-y-5" noValidate >
+
+            {/* Account Type */}
+            <fieldset className="space-y-2">
+              
+              <div className="grid grid-cols-3 gap-2">
+                {ROLE_OPTIONS.map(({ value, label, icon: Icon }) => (
+                  <div key={value}>
+                    <input
+                      type="radio"
+                      id={`role-${value}`}
+                      name="role"
+                      value={value}
+                      defaultChecked={value === "seeker"}
+                      className="peer sr-only"
+                    />
+                    <label
+                      htmlFor={`role-${value}`}
+                      className="flex cursor-pointer flex-col items-center gap-1.5 rounded-lg border border-white/10 bg-[#1a1a1a] px-2 py-3 text-center text-xs font-medium text-gray-400 transition hover:border-white/20 hover:text-gray-200 peer-checked:border-indigo-500 peer-checked:bg-indigo-500/10 peer-checked:text-indigo-300 peer-focus-visible:ring-2 peer-focus-visible:ring-indigo-500/40"
+                    >
+                      <Icon className="h-4 w-4" aria-hidden="true" />
+                      {label}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </fieldset>
 
             {/* Full Name */}
             <div className="space-y-2">
