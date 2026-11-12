@@ -29,7 +29,6 @@ import {
   UserRound,
   Users,
 } from "lucide-react";
-import { file } from "better-auth";
 
 const menuItemsByRole = {
   seeker: [

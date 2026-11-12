@@ -9,7 +9,9 @@ import {
   MapPin,
   Euro,
 } from "lucide-react";
-
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast"; // <-- 1. Notun Import
+import { createjob } from "@/lib/actions/jobs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -86,6 +88,11 @@ function IconInput({ icon: Icon, className = "", ...props }) {
 }
 
 export default function PostJobPage() {
+  const router = useRouter();
+  
+  // <-- 2. Notun State loading er jonno
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const [form, setForm] = useState({
     title: "",
     company: "",
@@ -104,10 +111,33 @@ export default function PostJobPage() {
   const set = (key) => (value) => setForm((f) => ({ ...f, [key]: value }));
   const onChange = (key) => (e) => set(key)(e.target.value);
 
-  const handleSubmit = (e) => {
+  // <-- 3. handleSubmit update kora hoyeche Toast ar Redirect diye
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // TODO: API call
-    console.log("Publish job:", form);
+    
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+
+    const toastId = toast.loading("Publishing job post...");
+
+    try {
+      const result = await createjob(form);
+
+      console.log("Job Created:", result);
+
+      // Success Toast
+      toast.success("Job posted successfully!", { id: toastId });
+
+      // Redirect to manage jobs page (apnar path onujayi change korte paren)
+      router.push("/dashboard/recruiter/jobs/manage");
+      
+    } catch (error) {
+      console.log(error);
+      // Error Toast
+      toast.error(error.message || "Failed to post job. Please try again.", { id: toastId });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -134,8 +164,6 @@ export default function PostJobPage() {
               across our network.
             </p>
           </div>
-
-         
         </div>
 
         <div className="space-y-6">
@@ -240,10 +268,7 @@ export default function PostJobPage() {
                 />
               </Field>
 
-              <Field
-                label="Application Deadline (deadline)"
-                htmlFor="deadline"
-              >
+              <Field label="Application Deadline (deadline)" htmlFor="deadline">
                 <IconInput
                   icon={CalendarDays}
                   id="deadline"
@@ -281,10 +306,7 @@ export default function PostJobPage() {
               </Field>
 
               <Field label="Frequency">
-                <Select
-                  value={form.frequency}
-                  onValueChange={set("frequency")}
-                >
+                <Select value={form.frequency} onValueChange={set("frequency")}>
                   <SelectTrigger className={`${fieldClass} w-full`}>
                     <SelectValue placeholder="Select" />
                   </SelectTrigger>
@@ -335,15 +357,17 @@ export default function PostJobPage() {
             </Field>
           </SectionCard>
         </div>
-         <div className="mt-8 flex justify-start">
-        <Button
-          type="submit"
-          className="h-11 w-full shrink-0 rounded-xl bg-indigo-500 px-6 font-semibold text-white shadow-[0_8px_30px_-6px_rgba(99,102,241,0.6)] hover:bg-indigo-400 sm:w-auto"
-        >
-          Publish Job
-          <ArrowRight className="size-4" />
-        </Button>
-      </div>
+        <div className="mt-8 flex justify-start">
+          {/* <-- 4. Button update kora hoyeche loading state er jonno */}
+          <Button
+            type="submit"
+            disabled={isSubmitting}
+            className="h-11 w-full shrink-0 rounded-xl bg-indigo-500 px-6 font-semibold text-white shadow-[0_8px_30px_-6px_rgba(99,102,241,0.6)] hover:bg-indigo-400 disabled:opacity-50 disabled:cursor-not-allowed sm:w-auto"
+          >
+            {isSubmitting ? "Publishing..." : "Publish Job"}
+            {!isSubmitting && <ArrowRight className="size-4 ml-2" />}
+          </Button>
+        </div>
       </form>
     </div>
   );
