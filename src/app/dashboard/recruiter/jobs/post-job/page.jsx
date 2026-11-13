@@ -24,7 +24,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import Link from "next/link";
 
 const JOB_TYPES = ["Full-time", "Part-time", "Contract", "Internship"];
 
@@ -129,8 +128,8 @@ export default function PostJobPage() {
       // Success Toast
       toast.success("Job posted successfully!", { id: toastId });
 
-      // Redirect to manage jobs page (apnar path onujayi change korte paren)
-      router.push("/dashboard/recruiter/jobs/manage");
+      // Redirect to manage jobs page
+      router.push("/dashboard/recruiter/jobs");
     } catch (error) {
       console.log(error);
       // Error Toast
@@ -363,7 +362,6 @@ export default function PostJobPage() {
           {/* <-- 4. Button update kora hoyeche loading state er jonno */}
           <Button
             type="submit"
-            render={<Link href="/dashboard/recruiter/jobs" />}
             disabled={isSubmitting}
             className="h-11 w-full shrink-0 rounded-xl bg-indigo-500 px-6 font-semibold text-white shadow-[0_8px_30px_-6px_rgba(99,102,241,0.6)] hover:bg-indigo-400 disabled:opacity-50 disabled:cursor-not-allowed sm:w-auto"
           >

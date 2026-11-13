@@ -2,6 +2,7 @@
 
 import { useState, useMemo , useEffect} from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import Link from "next/link";
 
 import {
   Banknote,
@@ -29,8 +30,6 @@ const JOB_TYPES = [
   "Part-time",
   "Internship",
   "Freelance",
-  "Temporary",
-  "Volunteer",
   "Other",
 ];
 
@@ -392,51 +391,53 @@ const handleCategoryChange = (category) => {
                 const salary = formatSalary(job);
 
                 return (
-                  <li
-                    key={job._id}
-                    className="flex gap-4 rounded-xl border border-white/[0.07] bg-[#121214] p-4"
-                  >
-                    <span
-                      className={`flex size-10 shrink-0 items-center justify-center rounded-lg ${style.box}`}
+                  <li key={job._id}>
+                    <Link
+                      href={`/browse-Jobs/${job._id}`}
+                      className="flex w-full gap-4 rounded-xl border border-white/[0.07] bg-[#121214] p-4 transition hover:border-white/20 hover:bg-[#18181b]"
                     >
-                      <Icon className="size-5" />
-                    </span>
+                      <span
+                        className={`flex size-10 shrink-0 items-center justify-center rounded-lg ${style.box}`}
+                      >
+                        <Icon className="size-5" />
+                      </span>
 
-                    <div className="min-w-0 flex-1">
-                      <h2 className="truncate text-[15px] font-semibold text-white">
-                        {job.title || "Untitled"}
-                      </h2>
+                      <div className="min-w-0 flex-1">
+                        <h2 className="truncate text-[15px] font-semibold text-white">
+                          {job.title || "Untitled"}
+                        </h2>
 
-                      <p className="mt-1 truncate text-xs text-zinc-400">
-                        {job.company || "—"} • {job.location || "—"}
-                        {job.isRemote && job.location !== "Remote"
-                          ? " (Remote)"
-                          : ""}
-                      </p>
+                        <p className="mt-1 truncate text-xs text-zinc-400">
+                          {job.company || "—"} • {job.location || "—"}
+                          {job.isRemote && job.location !== "Remote"
+                            ? " (Remote)"
+                            : ""}
+                        </p>
 
-                      <div className="mt-2.5 flex flex-wrap items-center gap-2">
-                        {salary && (
+                        <div className="mt-2.5 flex flex-wrap items-center gap-2">
+                          {salary && (
+                            <span className="inline-flex items-center gap-1.5 rounded-md border border-white/10 bg-white/[0.03] px-2.5 py-1 text-[11px] text-zinc-300">
+                              <Banknote className="size-3 text-zinc-400" />
+                              {salary}
+                            </span>
+                          )}
+
                           <span className="inline-flex items-center gap-1.5 rounded-md border border-white/10 bg-white/[0.03] px-2.5 py-1 text-[11px] text-zinc-300">
-                            <Banknote className="size-3 text-zinc-400" />
-                            {salary}
+                            <Clock className="size-3 text-zinc-400" />
+                            {job.type}
                           </span>
-                        )}
 
-                        <span className="inline-flex items-center gap-1.5 rounded-md border border-white/10 bg-white/[0.03] px-2.5 py-1 text-[11px] text-zinc-300">
-                          <Clock className="size-3 text-zinc-400" />
-                          {job.type}
-                        </span>
-
-                        {isSenior(job.title) && (
-                          <span className="inline-flex items-center gap-1.5 rounded-md border border-white/10 bg-white/[0.03] px-2.5 py-1 text-[11px] text-zinc-300">
-                            <Star className="size-3 text-amber-400" />
-                            Senior
-                          </span>
-                        )}
+                          {isSenior(job.title) && (
+                            <span className="inline-flex items-center gap-1.5 rounded-md border border-white/10 bg-white/[0.03] px-2.5 py-1 text-[11px] text-zinc-300">
+                              <Star className="size-3 text-amber-400" />
+                              Senior
+                            </span>
+                          )}
+                        </div>
                       </div>
-                    </div>
 
-                    <Bookmark className="size-4 shrink-0 text-zinc-500" />
+                      <Bookmark className="size-4 shrink-0 text-zinc-500" />
+                    </Link>
                   </li>
                 );
               })}
