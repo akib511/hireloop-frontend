@@ -7,7 +7,7 @@ async function BrowseJobsContent() {
 
   const jobs = Array.isArray(result) ? result : [];
 
-  return <BrowseJobsClient jobs={jobs} />;
+  return <BrowseJobsClient  jobs={jobs} />;
 }
 
 export default function BrowseJobsPage() {

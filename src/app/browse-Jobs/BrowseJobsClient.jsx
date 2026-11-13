@@ -1,6 +1,8 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo , useEffect} from "react";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
+
 import {
   Banknote,
   BadgeCheck,
@@ -105,9 +107,19 @@ const getPageItems = (page, totalPages) => {
 };
 
 export default function BrowseJobsClient({ jobs }) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [search, setSearch] = useState("");
-  const [selectedType, setSelectedType] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
+  
+const [selectedType, setSelectedType] = useState(
+    searchParams.get("type") || ""
+  );
+
+    const [selectedCategory, setSelectedCategory] = useState(
+    searchParams.get("category") || ""
+  );
+
   const [sort, setSort] = useState("recent");
   const [page, setPage] = useState(1);
 
@@ -158,15 +170,37 @@ export default function BrowseJobsClient({ jobs }) {
     currentPage * PAGE_SIZE,
   );
 
-  const handleTypeChange = (type) => {
-    setSelectedType(selectedType === type ? "" : type);
-    setPage(1);
-  };
 
-  const handleCategoryChange = (category) => {
-    setSelectedCategory(selectedCategory === category ? "" : category);
-    setPage(1);
-  };
+const updateURL = (key, value) => {
+  const params = new URLSearchParams(searchParams.toString());
+
+  if (value) {
+    params.set(key, value);
+  } else {
+    params.delete(key);
+  }
+
+  router.push(`${pathname}?${params.toString()}`, {
+    scroll: false,
+  });
+};
+
+
+ const handleTypeChange = (type) => {
+  const newType = selectedType === type ? "" : type;
+
+  setSelectedType(newType);
+  updateURL("type", newType);
+  setPage(1);
+};
+
+const handleCategoryChange = (category) => {
+  const newCategory = selectedCategory === category ? "" : category;
+
+  setSelectedCategory(newCategory);
+  updateURL("category", newCategory);
+  setPage(1);
+};
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-8">
