@@ -24,6 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import Link from "next/link";
 
 const JOB_TYPES = ["Full-time", "Part-time", "Contract", "Internship"];
 
@@ -89,7 +90,7 @@ function IconInput({ icon: Icon, className = "", ...props }) {
 
 export default function PostJobPage() {
   const router = useRouter();
-  
+
   // <-- 2. Notun State loading er jonno
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -114,7 +115,7 @@ export default function PostJobPage() {
   // <-- 3. handleSubmit update kora hoyeche Toast ar Redirect diye
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (isSubmitting) return;
     setIsSubmitting(true);
 
@@ -130,11 +131,12 @@ export default function PostJobPage() {
 
       // Redirect to manage jobs page (apnar path onujayi change korte paren)
       router.push("/dashboard/recruiter/jobs/manage");
-      
     } catch (error) {
       console.log(error);
       // Error Toast
-      toast.error(error.message || "Failed to post job. Please try again.", { id: toastId });
+      toast.error(error.message || "Failed to post job. Please try again.", {
+        id: toastId,
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -361,6 +363,7 @@ export default function PostJobPage() {
           {/* <-- 4. Button update kora hoyeche loading state er jonno */}
           <Button
             type="submit"
+            render={<Link href="/dashboard/recruiter/jobs" />}
             disabled={isSubmitting}
             className="h-11 w-full shrink-0 rounded-xl bg-indigo-500 px-6 font-semibold text-white shadow-[0_8px_30px_-6px_rgba(99,102,241,0.6)] hover:bg-indigo-400 disabled:opacity-50 disabled:cursor-not-allowed sm:w-auto"
           >

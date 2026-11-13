@@ -23,7 +23,7 @@ router.push("/signIn");
 
 const navLinks = [
 { name: "Home", href: "/" },
-{ name: "Browse Jobs", href: "/jobs" },
+{ name: "Browse Jobs", href: "/browse-Jobs" },
 { name: "Company", href: "/company" },
 { name: "Pricing", href: "/pricing" },
 { name: "Dashboard", href: `/dashboard/${session?.user.role}` },

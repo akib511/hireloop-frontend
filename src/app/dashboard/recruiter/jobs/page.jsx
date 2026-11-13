@@ -356,24 +356,24 @@ export default function ManageJobs({
   const [jobToDelete, setJobToDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const fetchJobs = async () => {
-    try {
-      try {
-        const response = await fetch("http://localhost:5000/jobs", {
-          cache: "no-store",
-        });
+  const fetchJobs = () => {
+    fetch("http://localhost:5000/jobs", {
+      cache: "no-store",
+    })
+      .then((response) => {
         if (!response.ok) throw new Error("API Error");
-        const result = await response.json();
+        return response.json();
+      })
+      .then((result) => {
         const jobData = Array.isArray(result) ? result : result.jobs || [];
         setJobs(jobData.map(normalizeJob));
-      } catch (err) {
+      })
+      .catch(() => {
         setJobs(MOCK_DATA.map(normalizeJob));
-      }
-    } catch (err) {
-      setError("Failed to load jobs.");
-    } finally {
-      setLoading(false);
-    }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   useEffect(() => {
@@ -432,7 +432,7 @@ export default function ManageJobs({
 
         <div className="flex w-full items-center gap-2 sm:w-auto">
           <Button
-            render={<Link href={newJobHref} />}
+            render={<Link href= "/dashboard/recruiter/jobs/post-job" />}
             nativeButton={false}
             className="flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 text-sm font-medium text-white shadow-md shadow-indigo-500/10 transition-all hover:bg-indigo-500 active:scale-[0.98] sm:w-auto"
           >
@@ -583,7 +583,7 @@ export default function ManageJobs({
                   <p className="mt-1 text-xs leading-5 text-zinc-400">
                     Are you sure you want to delete{" "}
                     <span className="font-semibold text-zinc-200">
-                      "{jobToDelete.title}"
+                      &quot;{jobToDelete.title}&quot;
                     </span>
                     ? This action cannot be undone.
                   </p>
