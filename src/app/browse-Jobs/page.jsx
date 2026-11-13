@@ -3,11 +3,17 @@ import { Suspense } from "react";
 import BrowseJobsClient from "./BrowseJobsClient";
 
 async function BrowseJobsContent() {
-  const result = await getJobs("").catch(() => []);
+  let jobs = [];
+  let loadError = "";
 
-  const jobs = Array.isArray(result) ? result : [];
+  try {
+    jobs = await getJobs("");
+  } catch (error) {
+    // API unreachable -> show an error state instead of a fake "No jobs found"
+    loadError = error.message || "Failed to load jobs.";
+  }
 
-  return <BrowseJobsClient  jobs={jobs} />;
+  return <BrowseJobsClient jobs={jobs} loadError={loadError} />;
 }
 
 export default function BrowseJobsPage() {

@@ -20,6 +20,7 @@ import {
   Search,
   Server,
   Star,
+  AlertCircle,
 } from "lucide-react";
 
 const PAGE_SIZE = 6;
@@ -105,7 +106,7 @@ const getPageItems = (page, totalPages) => {
   return items;
 };
 
-export default function BrowseJobsClient({ jobs }) {
+export default function BrowseJobsClient({ jobs, loadError }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -200,6 +201,28 @@ const handleCategoryChange = (category) => {
   updateURL("category", newCategory);
   setPage(1);
 };
+
+  // API unreachable -> honest error state (not a fake "No jobs found")
+  if (loadError) {
+    return (
+      <div className="mx-auto w-full max-w-6xl px-4 py-8">
+        <div className="rounded-xl border border-white/[0.07] bg-[#121214] px-4 py-16 text-center">
+          <AlertCircle className="mx-auto size-8 text-red-500" />
+          <p className="mt-3 text-sm font-medium text-zinc-300">
+            Couldn&apos;t load jobs
+          </p>
+          <p className="mt-1 max-w-md text-xs text-zinc-500">{loadError}</p>
+          <button
+            type="button"
+            onClick={() => router.refresh()}
+            className="mt-5 rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-500"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-8">

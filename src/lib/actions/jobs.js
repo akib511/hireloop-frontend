@@ -21,11 +21,24 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ||"http://localhost:5000"
 
 
 
- // secarc kore job gula pabo 
+ // searcharc kore job gula pabo 
 
- export const getJobs = async (query)=>{
-  const res = await fetch(`${BASE_URL}/jobs?${query}`)
+ export const getJobs = async (query = "")=>{
+  const res = await fetch(`${BASE_URL}/jobs?${query}`, {
+    cache: "no-store",
+  }).catch(() => {
+    // Network failure = backend is not running / unreachable
+    throw new Error(
+      `Cannot reach the API at ${BASE_URL}. Please make sure the backend server is running.`
+    );
+  });
 
-  return res.json()
+  if (!res.ok) {
+    throw new Error(`Failed to load jobs (status ${res.status})`);
+  }
+
+  const result = await res.json().catch(() => null);
+
+  return Array.isArray(result) ? result : [];
  }
- 
+  

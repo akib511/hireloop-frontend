@@ -1,31 +1,37 @@
 "use client";
 
+import { Suspense } from "react";
 import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 
-export default function SignInForm() {
+function SignInForm() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackURL = searchParams.get("callbackURL") || "/";
 
   async function handleSubmit(event) {
-  event.preventDefault();
+    event.preventDefault();
 
-  const formData = new FormData(event.target);
-  const data = Object.fromEntries(formData.entries());
+    const formData = new FormData(event.target);
+    const data = Object.fromEntries(formData.entries());
 
-  const { data : user, error } = await authClient.signIn.email({
-    email: data.email, // required, The email address of the user.
-    password: data.password, // required, The password of the user. It should be at least 8 characters long and max 128 by default.
-    rememberMe: true, // If false, the user will be signed out when the browser is closed. (optional) (default: true)
-    callbackURL: "/", // An optional URL to redirect to after the user signs in. (optional)
-});
-if (error) {
-  console.log(error.message);
-  return;
-}
+    const { error } = await authClient.signIn.email({
+      email: data.email, // required, The email address of the user.
+      password: data.password, // required, The password of the user. It should be at least 8 characters long and max 128 by default.
+      rememberMe: true, // If false, the user will be signed out when the browser is closed. (optional) (default: true)
+      callbackURL: callbackURL, // An optional URL to redirect to after the user signs in. (optional)
+    });
 
-console.log(user);
+    if (error) {
+      console.log(error.message);
+      return;
+    }
 
-  console.log(user);
-}
+    // Send the user back to where they came from (e.g. the job they tried to apply to)
+    router.push(callbackURL);
+    router.refresh();
+  }
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-black px-4 py-12 sm:px-6 lg:px-8">
 
@@ -122,5 +128,14 @@ console.log(user);
         </p>
       </div>
     </div>
+  );
+}
+
+// useSearchParams() must live under a <Suspense> boundary so the route can be prerendered
+export default function SignInPage() {
+  return (
+    <Suspense fallback={null}>
+      <SignInForm />
+    </Suspense>
   );
 }

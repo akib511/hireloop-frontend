@@ -1,5 +1,6 @@
 import FeaturesSection from "@/components/Features";
 import Hero from "@/components/Hero";
+import PricingSection from "@/components/Pricing";
 import Navbar from "@/components/ui/Navbar";
 
 
@@ -9,6 +10,7 @@ const page = () => {
       <Navbar />
       <Hero />
       <FeaturesSection />
+      <PricingSection />
     </div>
   );
 };

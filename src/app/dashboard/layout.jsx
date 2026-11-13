@@ -6,7 +6,9 @@ const DashboardLayout = ({ children }) => {
      return (
     <SidebarProvider>
       <DashboardSidebar />
-      <main>
+      {/* flex-1 + min-w-0: main always fills the space the sidebar leaves
+          (entire screen when the sidebar is closed) without touching any page design */}
+      <main className="min-w-0 flex-1">
         <SidebarTrigger />
         {children}
       </main>

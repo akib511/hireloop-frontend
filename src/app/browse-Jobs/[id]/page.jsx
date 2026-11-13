@@ -1,23 +1,21 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { 
-  Banknote, 
-  MapPin, 
-  Bookmark, 
+import {
+  Banknote,
+  MapPin,
+  Bookmark,
   ArrowLeft,
+  AlertCircle,
   BriefcaseBusiness,
   CalendarClock,
   MonitorSmartphone,
-  CheckCircle2
+  CheckCircle2,
 } from "lucide-react";
+import ApplyButton from "./ApplyButton";
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
-
-/* -------------------------------------------------------------------------- */
-/* Helpers                                                                     */
-/* -------------------------------------------------------------------------- */
 
 const formatSalary = (job) => {
   const currency = job.currency || "€";
@@ -48,7 +46,6 @@ const toList = (value) => {
     .filter(Boolean);
 };
 
-// লিস্ট ডিজাইন আরও সুন্দর করা হয়েছে
 const Description = ({ items }) =>
   items.length > 1 ? (
     <ul className="mt-5 space-y-3 text-sm leading-relaxed text-zinc-300">
@@ -63,9 +60,27 @@ const Description = ({ items }) =>
     <p className="mt-4 text-sm leading-relaxed text-zinc-300">{items[0]}</p>
   );
 
-/* -------------------------------------------------------------------------- */
-/* Page                                                                        */
-/* -------------------------------------------------------------------------- */
+// Shown when the API server is unreachable (plain <a> forces a full reload = retry)
+function ApiErrorState({ id }) {
+  return (
+    <div className="mt-4 rounded-3xl border border-white/10 bg-[#121214] p-10 text-center">
+      <AlertCircle className="mx-auto size-8 text-red-500" />
+      <p className="mt-3 text-sm font-medium text-zinc-300">
+        Couldn&apos;t load this job
+      </p>
+      <p className="mt-1 text-xs text-zinc-500">
+        The server is unreachable. Please make sure the backend is running and
+        try again.
+      </p>
+      <a
+        href={`/browse-Jobs/${id}`}
+        className="mt-5 inline-flex rounded-xl bg-indigo-500 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-400"
+      >
+        Try Again
+      </a>
+    </div>
+  );
+}
 
 async function JobDetailsContent({ params }) {
   const { id } = await params;
@@ -74,7 +89,12 @@ async function JobDetailsContent({ params }) {
     cache: "no-store",
   }).catch(() => null);
 
-  if (!res || !res.ok) {
+  // Backend unreachable -> honest error state instead of a misleading 404
+  if (!res) {
+    return <ApiErrorState id={id} />;
+  }
+
+  if (!res.ok) {
     notFound();
   }
 
@@ -93,7 +113,11 @@ async function JobDetailsContent({ params }) {
     { label: "Location", value: job.location || "—", icon: MapPin },
     { label: "Salary", value: salaryText, icon: Banknote },
     { label: "Deadline", value: formatDate(job.deadline), icon: CalendarClock },
-    { label: "Remote", value: job.isRemote ? "Yes" : "No", icon: MonitorSmartphone },
+    {
+      label: "Remote",
+      value: job.isRemote ? "Yes" : "No",
+      icon: MonitorSmartphone,
+    },
   ];
 
   return (
@@ -147,10 +171,7 @@ async function JobDetailsContent({ params }) {
               <Bookmark className="size-4" />
               Bookmark
             </button>
-
-            <button className="rounded-xl bg-indigo-500 px-8 py-3 text-sm font-semibold text-white shadow-[0_0_20px_rgba(99,102,241,0.3)] transition-all hover:bg-indigo-400 hover:shadow-[0_0_25px_rgba(99,102,241,0.5)]">
-              Apply Now
-            </button>
+            <ApplyButton job={job} />
           </div>
         </div>
       </div>
