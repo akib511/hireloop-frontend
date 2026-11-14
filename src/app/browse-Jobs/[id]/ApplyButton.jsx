@@ -1,10 +1,11 @@
+
 "use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
-import { applyToAJob } from "@/lib/actions/applications";
+import { applyToAJob, getApplicationsCount } from "@/lib/actions/applications";
 import { authClient } from "@/lib/auth-client";
 
 export default function ApplyButton({ job }) {
@@ -19,7 +20,7 @@ export default function ApplyButton({ job }) {
   const handleApply = async () => {
     if (isApplying || applied || !jobId) return;
 
-    // Not signed in yet -> send them to sign in and come back afterwards
+    // Check user authentication
     if (!session) {
       router.push(
         `/signIn?callbackURL=${encodeURIComponent(`/browse-Jobs/${jobId}`)}`
@@ -27,17 +28,25 @@ export default function ApplyButton({ job }) {
       return;
     }
 
-    // Only job seeker accounts can apply for jobs
+    // Only job seekers can apply
     if (session.user.role !== "seeker") {
       toast.error("Only job seeker accounts can apply for jobs.");
       return;
     }
 
+    // Check user's total applications
+    const countResult = await getApplicationsCount(session.user.id);
+
+    if (countResult.count >= 10) {
+      router.push("/payment");
+      return;
+    }
+
     setIsApplying(true);
+
     const toastId = toast.loading("Submitting your application...");
 
     try {
-      // Full application object — every field the My Applications page shows
       const application = {
         jobId,
         jobTitle: job.title || "Untitled",
@@ -55,8 +64,13 @@ export default function ApplyButton({ job }) {
       await applyToAJob(application);
 
       setApplied(true);
-      toast.success("Application submitted successfully!", { id: toastId });
+
+      toast.success("Application submitted successfully!", {
+        id: toastId,
+      });
+
       router.push("/dashboard/seeker/applications");
+
     } catch (error) {
       toast.error(error.message || "Failed to submit application.", {
         id: toastId,

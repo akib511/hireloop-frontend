@@ -518,9 +518,13 @@ export default function MyApplicationsPage() {
         </div>
 
         {/* Floating Action Button */}
-        <button className="fixed bottom-5 right-5 sm:bottom-8 sm:right-8 flex size-12 sm:size-14 items-center justify-center rounded-full bg-white text-black shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:scale-105 hover:shadow-[0_0_25px_rgba(255,255,255,0.3)] transition-all">
-          <Plus className="size-5 sm:size-6" strokeWidth={2.5} />
-        </button>
+      <Link
+  href="/browse-Jobs"
+  aria-label="Browse jobs"
+  className="fixed bottom-5 right-5 sm:bottom-8 sm:right-8 flex size-12 sm:size-14 items-center justify-center rounded-full bg-white text-black shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:scale-105 hover:shadow-[0_0_25px_rgba(255,255,255,0.3)] transition-all"
+>
+  <Plus className="size-5 sm:size-6" strokeWidth={2.5} />
+</Link>
       </div>
     </div>
   );

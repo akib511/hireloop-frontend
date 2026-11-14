@@ -55,3 +55,12 @@ export const getMyApplications = async (userId) => {
 
   return Array.isArray(result) ? result : [];
 };
+
+
+export const getApplicationsCount = async (userId) => {
+  const res = await fetch(
+    `${BASE_URL}/applications/count?applicantId=${encodeURIComponent(userId)}`,
+    { cache: "no-store" }
+  );
+    return res.json();
+}
