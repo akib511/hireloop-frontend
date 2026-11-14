@@ -62,5 +62,12 @@ export const getApplicationsCount = async (userId) => {
     `${BASE_URL}/applications/count?applicantId=${encodeURIComponent(userId)}`,
     { cache: "no-store" }
   );
-    return res.json();
-}
+
+  const result = await res.json().catch(() => null);
+
+  if (!res.ok) {
+    throw new Error(result?.message || "Failed to load applications count");
+  }
+
+  return { count: Number(result?.count) || 0 };
+};

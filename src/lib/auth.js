@@ -33,6 +33,15 @@ export const auth = betterAuth({
         input: true, // accept the role chosen in the signup form
         validator: { input: roleValidator },
       },
+      // Set to true by the backend (/payments/checkout-verify) after a
+      // successful premium purchase. Exposed here so the session's user
+      // object carries it — premium users skip the free application limit.
+      premium: {
+        type: "boolean",
+        required: false,
+        defaultValue: false,
+        input: false, // never writable from client-side signup/update
+      },
     },
   },
 

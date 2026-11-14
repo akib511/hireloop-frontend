@@ -34,12 +34,20 @@ export default function ApplyButton({ job }) {
       return;
     }
 
-    // Check user's total applications
-    const countResult = await getApplicationsCount(session.user.id);
+    // Check application limit for free users only — premium users are
+    // unlimited and must never be sent to the payment page.
+    if (!session.user.premium) {
+      try {
+        const countResult = await getApplicationsCount(session.user.id);
 
-    if (countResult.count >= 10) {
-      router.push("/payment");
-      return;
+        // Free plan allows up to 10 applications; the 11th requires premium.
+        if (countResult.count >= 10) {
+          router.push("/payment");
+          return;
+        }
+      } catch (err) {
+        console.error("Application limit check failed:", err);
+      }
     }
 
     setIsApplying(true);
